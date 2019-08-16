@@ -16,7 +16,7 @@ def csv_from_excel(file,sheet,new_name):
     your_csv_file.close()
 
 # runs the csv_from_excel function:
-csv_from_excel('CTCAEAE.xlsx', 'sheet1', 'AECSV.csv')
+csv_from_excel('CTCAEAE.xlsx', 'Sheet1', 'AECSV.csv')
 
 #Convert the csv file into a dictionary to pull the definitions
 with open('AECSV.csv') as f:
@@ -24,7 +24,7 @@ with open('AECSV.csv') as f:
     reader = csv.reader(f, skipinitialspace=True)
     def_dict = dict(reader)
 
-csv_from_excel('CTCAEAE.xlsx', 'sheet2', 'Rangevalues.csv')
+csv_from_excel('CTCAEAE.xlsx', 'Sheet2', 'Rangevalues.csv')
 
 with open('Rangevalues.csv') as f:
     next(f)  # Skip the header
@@ -129,13 +129,14 @@ def grader_characters(x):
         if value in ('hospitalization', 'life-threatening', 'urgent'):
             print("Your AE is grade 4")
 
-# create a function that searches my dictionary definitions and outputs the key
-# def search(values, searchFor):
-#     for key,value in values.items(): # getting each key and val for the dic
-#         for val in value: # the values are all lists which i can loop around
-#             if searchFor in (' ' + val + ' '): # if the search term in the list
-#                 print("{}".format(values['address'])) # print out the value
+#function to turn the search values into keys for the range dictionary
+def valuemaker(value, x):
+    return value.strip() + x.strip()
 
+
+# print(range_dict['Anemia_min_'])
+# ran3 = [value for value, key in range_dict.items() if 'Anemia_min_' in (key)]
+# print(ran3)
 
 while True:
     inp = input('Would you like to search or input your AE term? ')
@@ -152,13 +153,29 @@ while True:
             val = term
             print("Whould you like the definition for the",val,'?')
             definition = input('')
-            ran_ = ''.join([key for key, value in range_dict.items() if val in (value)])
-            ran1 = ''.join([key for key, value in range_dict.items() if val in (value)])
-            ran2 = ''.join([key for key, value in range_dict.items() if val in (value)])
-            ran3 = ''.join([key for key, value in range_dict.items() if val in (value)])
-            grader_increasing(val,ran_,ran1,ran2,ran3)
+            if val in ('Anemia','White blood cell decreased','Platelet count decreased','Hyponatremia'):
+                ran_ = float(range_dict[valuemaker(val, '_min_')])
+                ran1 = float(range_dict[valuemaker(val, '_min1')])
+                ran2 = float(range_dict[valuemaker(val, '_min2')])
+                ran3 = float(range_dict[valuemaker(val, '_min3')])
+                print(ran_,ran1,ran2,ran3)
+                grader_decreasing(val, ran_, ran1, ran2, ran3)
+            if val in ('Conjunctivitis', 'Myelitis', 'Kidney anastomotic leak', 'Flu like symptoms', 'Non-cardiac chest pain', 'Pain', 'Myalgia', 'Myositis'):
+                print ("Would you like the definition for", val)
+                definition = input('')
+                grader_characters(val)
+            else:
+                ran_ = float(range_dict[valuemaker(val, '_min_')])
+                ran1 = float(range_dict[valuemaker(val, '_min1')])
+                ran2 = float(range_dict[valuemaker(val, '_min2')])
+                ran3 = float(range_dict[valuemaker(val, '_min3')])
+                print(ran_,ran1,ran2,ran3)
+                grader_increasing(val, ran_, ran1, ran2, ran3)
+        elif confirm in ('n', 'no'):
+            print("Sorry, let's try again")
+            continue
 
-            # if val in 'Anemia':
+                # if val in 'Anemia':
             #     definition = input("Would you like the definition for the Anemia AE? ")
             #     grader_decreasing(val, 13.9, 10.0, 8.0, 5.0)
             #
@@ -197,92 +214,84 @@ while True:
             # if val in ('Electrocardiogram QT corrected interval prolonged') or search in ('QTC', 'elevated QTC', 'qtc'):
             #     definition = input("Would you like the definition for the Electrocardiogram QT corrected interval prolonged AE? ")
             #     grader_increasing('Electrocardiogram QT corrected interval prolonged', 450, 481, 500, 600)
-            #
-            # if val in ('Conjunctivitis', 'Myelitis', 'Kidney anastomotic leak', 'Flu like symptoms', 'Non-cardiac chest pain', 'Pain', 'Myalgia', 'Myositis'):
-            #     print ("Would you like the definition for", val)
-            #     definition = input('')
-            #     grader_characters(val)
-        elif confirm in ('n', 'no'):
-            print("Sorry, let's try again")
-            continue
 
-    if inp in ('input' or 'input AE term'):
-        val = input('What is the AE? ')
-        if val in ('Blood bilirubin increased','bilirubin increased', 'high bilirubin','bilirubin','Bilirubin'):
-            definition = input("Whould you like the definition for the Blood bilirubin increased AE? ")
-            grader_increasing('Blood bilirubin increased',1.30,1.95,3.90,13.00)
-
-        if val in ('Anemia', 'hemoglobin','anemia'):
-            definition = input("Would you like the definition for the Anemia AE? ")
-            grader_decreasing('Anemia',13.9,10.0,8.0,5.0)
-
-        if val in ('Fever', 'high temperature', 'fever'):
-            definition = input("Would you like the definition for the Fever AE? ")
-            grader_increasing('Fever',38.0,39.0,40.0,43.0)
-
-        if val in ('White blood cell decreased', 'low WBC', 'low wbc', 'low white blood cell count', 'low wbc count'):
-            definition = input("Would you like the definition for the Fever AE? ")
-            grader_increasing('Fever',38.0,39.0,40.0,43.0)
-
-        if val in ('Hyperkalemia', 'high potassium'):
-            definition = input("Would you like the definition for the Fever AE? ")
-            grader_increasing('Fever',38.0,39.0,40.0,43.0)
-
-        if val in ('Alanine aminotransferase increased', 'elevated ALT', 'high ALT', 'increased ALT'):
-            definition = input("Would you like the definition for the Fever AE? ")
-            grader_increasing('Alanine aminotransferase increased',38.0,39.0,40.0,43.0)
-
-        if val in ('Aspartate aminotransferase increased', 'elevated AST', 'high AST', 'increased AST'):
-            definition = input("Would you like the definition for the Aspartate aminotransferase increased AE? ")
-            grader_increasing('Aspartate aminotransferase increased',38.0,39.0,40.0,43.0)
-
-        if val in ('Hyponatremia', 'low sodium', 'decreased sodium'):
-            definition = input("Would you like the definition for the Hyponatremia AE? ")
-            grader_increasing('Hyponatremia',38.0,39.0,40.0,43.0)
-
-        if val in ('Hypernatremia', 'high sodium', 'increased sodium', 'elevated sodium'):
-            definition = input("Would you like the definition for the Hypernatremia AE? ")
-            grader_increasing('Hypernatremia',38.0,39.0,40.0,43.0)
-
-        if val in ('Platelet count decreased', 'high temperature', 'fever'):
-            definition = input("Would you like the definition for the Platelet count decreased AE? ")
-            grader_increasing('Platelet count decreased',38.0,39.0,40.0,43.0)
-
-        if val in ('Electrocardiogram QT corrected interval prolonged', 'QTC', 'elevated QTC', 'qtc'):
-            definition = input("Would you like the definition for the Electrocardiogram QT corrected interval prolonged AE? ")
-            grader_increasing('Electrocardiogram QT corrected interval prolonged',38.0,39.0,40.0,43.0)
-
-        if val in ('Conjunctivitis', 'inflamed conjunctiva'):
-            definition = input("Would you like the definition for the Conjunctivitis AE? ")
-            grader_increasing('Conjunctivitis',38.0,39.0,40.0,43.0)
-
-        if val in ('Myelitis', 'swollen spine', 'inflamed spine', 'spinal cord inflamation'):
-            definition = input("Would you like the definition for the Myelitis AE? ")
-            grader_increasing('Myelitis',38.0,39.0,40.0,43.0)
-
-        if val in ('Kidney anastomotic leak', 'kidney leak', 'urine leaking'):
-            definition = input("Would you like the definition for the Kidney anastomotic leak AE? ")
-            grader_increasing('Kidney anastomotic leak',38.0,39.0,40.0,43.0)
-
-        if val in ('Flu like symptoms', 'flu', 'influenza'):
-            definition = input("Would you like the definition for the Flu like symptoms AE? ")
-            grader_increasing('Flu like symptoms',38.0,39.0,40.0,43.0)
-
-        if val in ('Non-cardiac chest pain', 'chest pain', 'pain in chest'):
-            definition = input("Would you like the definition for the Non-cardiac chest pain AE? ")
-            grader_increasing('Non-cardiac chest pain',38.0,39.0,40.0,43.0)
-
-        if val in ('Pain', 'pain', 'general pain', 'in pain'):
-            definition = input("Would you like the definition for the Pain AE? ")
-            grader_increasing('Pain',38.0,39.0,40.0,43.0)
-
-        if val in ('Myalgia', 'muscles soreness', 'sore muscles', 'in pain'):
-            definition = input("Would you like the definition for the Myalgia AE? ")
-            grader_increasing('Myalgia',38.0,39.0,40.0,43.0)
-
-        if val in ('Myositis', 'inflamed eyes'):
-            definition = input("Would you like the definition for the Myositis AE? ")
-            grader_increasing('Myositis',38.0,39.0,40.0,43.0)
+    # if inp in ('input' or 'input AE term'):
+    #     val = input('What is the AE? ')
+    #     if val in ('Blood bilirubin increased','bilirubin increased', 'high bilirubin','bilirubin','Bilirubin'):
+    #         definition = input("Whould you like the definition for the Blood bilirubin increased AE? ")
+    #         grader_increasing('Blood bilirubin increased',1.30,1.95,3.90,13.00)
+    #
+    #     if val in ('Anemia', 'hemoglobin','anemia'):
+    #         definition = input("Would you like the definition for the Anemia AE? ")
+    #         grader_decreasing('Anemia',13.9,10.0,8.0,5.0)
+    #
+    #     if val in ('Fever', 'high temperature', 'fever'):
+    #         definition = input("Would you like the definition for the Fever AE? ")
+    #         grader_increasing('Fever',38.0,39.0,40.0,43.0)
+    #
+    #     if val in ('White blood cell decreased', 'low WBC', 'low wbc', 'low white blood cell count', 'low wbc count'):
+    #         definition = input("Would you like the definition for the Fever AE? ")
+    #         grader_increasing('Fever',38.0,39.0,40.0,43.0)
+    #
+    #     if val in ('Hyperkalemia', 'high potassium'):
+    #         definition = input("Would you like the definition for the Fever AE? ")
+    #         grader_increasing('Fever',38.0,39.0,40.0,43.0)
+    #
+    #     if val in ('Alanine aminotransferase increased', 'elevated ALT', 'high ALT', 'increased ALT'):
+    #         definition = input("Would you like the definition for the Fever AE? ")
+    #         grader_increasing('Alanine aminotransferase increased',38.0,39.0,40.0,43.0)
+    #
+    #     if val in ('Aspartate aminotransferase increased', 'elevated AST', 'high AST', 'increased AST'):
+    #         definition = input("Would you like the definition for the Aspartate aminotransferase increased AE? ")
+    #         grader_increasing('Aspartate aminotransferase increased',38.0,39.0,40.0,43.0)
+    #
+    #     if val in ('Hyponatremia', 'low sodium', 'decreased sodium'):
+    #         definition = input("Would you like the definition for the Hyponatremia AE? ")
+    #         grader_increasing('Hyponatremia',38.0,39.0,40.0,43.0)
+    #
+    #     if val in ('Hypernatremia', 'high sodium', 'increased sodium', 'elevated sodium'):
+    #         definition = input("Would you like the definition for the Hypernatremia AE? ")
+    #         grader_increasing('Hypernatremia',38.0,39.0,40.0,43.0)
+    #
+    #     if val in ('Platelet count decreased', 'high temperature', 'fever'):
+    #         definition = input("Would you like the definition for the Platelet count decreased AE? ")
+    #         grader_increasing('Platelet count decreased',38.0,39.0,40.0,43.0)
+    #
+    #     if val in ('Electrocardiogram QT corrected interval prolonged', 'QTC', 'elevated QTC', 'qtc'):
+    #         definition = input("Would you like the definition for the Electrocardiogram QT corrected interval prolonged AE? ")
+    #         grader_increasing('Electrocardiogram QT corrected interval prolonged',38.0,39.0,40.0,43.0)
+    #
+    #     if val in ('Conjunctivitis', 'inflamed conjunctiva'):
+    #         definition = input("Would you like the definition for the Conjunctivitis AE? ")
+    #         grader_increasing('Conjunctivitis',38.0,39.0,40.0,43.0)
+    #
+    #     if val in ('Myelitis', 'swollen spine', 'inflamed spine', 'spinal cord inflamation'):
+    #         definition = input("Would you like the definition for the Myelitis AE? ")
+    #         grader_increasing('Myelitis',38.0,39.0,40.0,43.0)
+    #
+    #     if val in ('Kidney anastomotic leak', 'kidney leak', 'urine leaking'):
+    #         definition = input("Would you like the definition for the Kidney anastomotic leak AE? ")
+    #         grader_increasing('Kidney anastomotic leak',38.0,39.0,40.0,43.0)
+    #
+    #     if val in ('Flu like symptoms', 'flu', 'influenza'):
+    #         definition = input("Would you like the definition for the Flu like symptoms AE? ")
+    #         grader_increasing('Flu like symptoms',38.0,39.0,40.0,43.0)
+    #
+    #     if val in ('Non-cardiac chest pain', 'chest pain', 'pain in chest'):
+    #         definition = input("Would you like the definition for the Non-cardiac chest pain AE? ")
+    #         grader_increasing('Non-cardiac chest pain',38.0,39.0,40.0,43.0)
+    #
+    #     if val in ('Pain', 'pain', 'general pain', 'in pain'):
+    #         definition = input("Would you like the definition for the Pain AE? ")
+    #         grader_increasing('Pain',38.0,39.0,40.0,43.0)
+    #
+    #     if val in ('Myalgia', 'muscles soreness', 'sore muscles', 'in pain'):
+    #         definition = input("Would you like the definition for the Myalgia AE? ")
+    #         grader_increasing('Myalgia',38.0,39.0,40.0,43.0)
+    #
+    #     if val in ('Myositis', 'inflamed eyes'):
+    #         definition = input("Would you like the definition for the Myositis AE? ")
+    #         grader_increasing('Myositis',38.0,39.0,40.0,43.0)
     print ('Thank you for using the calculator!')
     print ('Go again:')
     continue
